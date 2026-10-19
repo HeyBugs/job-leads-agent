@@ -1,0 +1,21 @@
+# secrets and personal data
+config.json
+answers.json
+facts.md
+profile.md
+coach.md
+tg_state.json
+sms_state.json
+# runtime state and outputs
+leads.db
+*.db
+digest_state.json
+scout_state.json
+browser-profile/
+logs/
+digests/
+applications/
+__pycache__/
+*.pyc
+.venv/
+venv/

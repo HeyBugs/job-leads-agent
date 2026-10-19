@@ -1,0 +1,44 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Fake Application Form</title></head>
+<body>
+<h1>Software Engineer — Fake Co</h1>
+<form>
+  <p><label for="fn">First Name *</label><br><input id="fn" required></p>
+  <p><label for="ln">Last Name *</label><br><input id="ln" required></p>
+  <p><label for="em">Email *</label><br><input id="em" type="text" required></p>
+  <p><label for="ph">Phone *</label><br><input id="ph" required></p>
+  <p><label for="li">LinkedIn Profile</label><br><input id="li"></p>
+  <p><label for="cl">Cover Letter</label><br><textarea id="cl" rows="4"></textarea></p>
+
+  <p><label for="elig">Are you legally eligible to work in Canada? *</label><br>
+  <select id="elig" required><option value=""></option><option>Yes</option><option>No</option></select></p>
+
+  <p><label for="spon">Will you now or in the future require visa sponsorship? *</label><br>
+  <select id="spon" required><option value=""></option><option>Yes</option><option>No</option></select></p>
+
+  <p><label for="prov">Which U.S. State or Canadian Province do you reside in? *</label><br>
+  <select id="prov" required><option value=""></option><option>California</option>
+  <option>Ontario</option><option>Quebec</option></select></p>
+
+  <!-- deliberately NO "Careers" option — the fallback chain must handle it -->
+  <p><label for="hear">How did you first learn about us? *</label><br>
+  <select id="hear" required><option value=""></option><option>LinkedIn</option>
+  <option>Company Website</option><option>Other</option></select></p>
+
+  <p><label for="pron">Pronouns *</label><br>
+  <select id="pron" required><option value=""></option><option>He/Him</option>
+  <option>She/Her</option><option>They/Them</option></select></p>
+
+  <p><label for="pronounce">Name Pronunciation</label><br><input id="pronounce"></p>
+  <p><label for="other">Other Links or anything else</label><br><input id="other"></p>
+
+  <p><label for="why">Why do you want to work at Fake Co? *</label><br>
+  <textarea id="why" rows="4" required></textarea></p>
+
+  <p><label for="extra">Anything else you would like to share?</label><br>
+  <textarea id="extra" rows="4"></textarea></p>
+
+  <button type="button" onclick="document.getElementById('done').textContent='Thank you for applying! We have received your application.'">Submit application</button>
+  <p id="done"></p>
+</form>
+</body></html>

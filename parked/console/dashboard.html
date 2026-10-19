@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="refresh" content="900">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
+<title>Job Leads Console</title>
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e;
+  --mut: #898781; --grid: #e1e0d9; --ring: rgba(11,11,11,0.10);
+  --seq: #2a78d6; --seq-track: #cde2fb;
+  --good: #0ca30c; --warning: #fab219; --serious: #ec835a;
+  --f1: #86b6ef; --f2: #5598e7; --f3: #2a78d6; --f4: #1c5cab; --f5: #0d366b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink-2: #c3c2b7;
+    --mut: #898781; --grid: #2c2c2a; --ring: rgba(255,255,255,0.10);
+    --seq: #3987e5; --seq-track: #184f95;
+    --f1: #184f95; --f2: #256abf; --f3: #3987e5; --f4: #6da7ec; --f5: #9ec5f4;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink-2: #c3c2b7;
+  --mut: #898781; --grid: #2c2c2a; --ring: rgba(255,255,255,0.10);
+  --seq: #3987e5; --seq-track: #184f95;
+  --f1: #184f95; --f2: #256abf; --f3: #3987e5; --f4: #6da7ec; --f5: #9ec5f4;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; padding: 22px; }
+.wrap { max-width: 1280px; margin: 0 auto; }
+.head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.head .spacer { flex: 1; }
+h1 { font-size: 20px; margin: 0; }
+.sub { color: var(--mut); font-size: 12.5px; margin: 4px 0 14px; }
+h2 { font-size: 13px; margin: 22px 0 8px; color: var(--ink-2);
+  text-transform: uppercase; letter-spacing: .04em; font-weight: 600;
+  display: flex; align-items: center; gap: 8px; }
+h2:first-child { margin-top: 0; }
+.count { background: var(--surface); border: 1px solid var(--ring);
+  border-radius: 999px; padding: 0 8px; font-size: 11.5px; color: var(--mut);
+  font-variant-numeric: tabular-nums; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 18px;
+  align-items: start; }
+@media (max-width: 1100px) { .layout { grid-template-columns: 1fr; } }
+.warn { background: var(--surface); border: 1px solid var(--warning);
+  border-radius: 10px; padding: 10px 14px; margin-bottom: 12px;
+  color: var(--ink-2); font-weight: 600; }
+.focus { display: flex; justify-content: space-between; align-items: center;
+  gap: 12px; flex-wrap: wrap; background: var(--surface);
+  border: 1px solid var(--seq); border-radius: 10px; padding: 11px 14px;
+  margin-bottom: 14px; }
+.focus-k { color: var(--seq); font-weight: 700; font-size: 12px;
+  text-transform: uppercase; letter-spacing: .04em; margin-right: 6px; }
+.scard { background: var(--surface); border: 1px solid var(--ring);
+  border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
+.scard-h { font-weight: 700; font-size: 12.5px; margin-bottom: 8px;
+  color: var(--ink); }
+.kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-bottom: 12px; }
+.kpi { background: var(--surface); border: 1px solid var(--ring);
+  border-radius: 10px; padding: 10px 12px; }
+.kpi-v { font-size: 22px; font-weight: 650; }
+.kpi-l { color: var(--ink-2); font-size: 12px; }
+.frow { display: flex; justify-content: space-between; align-items: center;
+  padding: 3px 0; color: var(--ink-2); font-size: 12.5px; }
+.fv { font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 650; }
+.fdot { display: inline-block; width: 9px; height: 9px; border-radius: 3px;
+  margin-right: 7px; vertical-align: -1px; }
+.f1 { background: var(--f1); } .f2 { background: var(--f2); }
+.f3 { background: var(--f3); } .f4 { background: var(--f4); }
+.f5 { background: var(--f5); }
+.coach summary { font-weight: 700; font-size: 12.5px; cursor: pointer;
+  list-style: none; }
+.coach summary::before { content: "▸ "; color: var(--mut); }
+.coach[open] summary::before { content: "▾ "; }
+.coach p { margin: 8px 0 4px; color: var(--ink-2); font-size: 13px; }
+.coach ul { margin: 6px 0 2px; padding-left: 18px; color: var(--ink-2);
+  font-size: 13px; }
+.coach li { margin: 3px 0; }
+.bars { display: flex; gap: 3px; align-items: flex-end; height: 38px;
+  margin-bottom: 6px; }
+.bar { flex: 1; max-width: 12px; border-radius: 3px 3px 0 0;
+  background: var(--seq); display: inline-block; }
+.filters { display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  margin: 0 0 10px; }
+.filters input { font: 13px system-ui, sans-serif; color: var(--ink);
+  background: var(--surface); border: 1px solid var(--ring); border-radius: 8px;
+  padding: 6px 10px; width: 220px; }
+.chip-f { font: 12.5px system-ui, sans-serif; color: var(--ink-2);
+  background: var(--surface); border: 1px solid var(--ring);
+  border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.chip-f.active { color: var(--seq); border-color: var(--seq); font-weight: 600; }
+.card { background: var(--surface); border: 1px solid var(--ring);
+  border-radius: 10px; overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 780px; }
+th { text-align: left; color: var(--mut); font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .03em; padding: 9px 12px;
+  border-bottom: 1px solid var(--grid); }
+td { padding: 10px 12px; border-bottom: 1px solid var(--grid);
+  vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+tr:hover td { background: color-mix(in srgb, var(--seq) 4%, transparent); }
+a { color: var(--seq); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.t a { color: var(--ink); font-weight: 600; }
+.why { color: var(--ink-2); font-size: 12.5px; margin-top: 2px; max-width: 380px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; }
+.flags { color: var(--ink-2); font-size: 12px; margin-top: 2px; }
+.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sal { font-size: 12px; max-width: 150px; display: -webkit-box;
+  -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.mut { color: var(--mut); }
+.stale { margin-left: 6px; }
+.newdot { color: var(--good); font-size: 10px; vertical-align: 2px; }
+.co { white-space: nowrap; }
+.av { display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%; background: var(--page);
+  border: 1px solid var(--ring); color: var(--ink-2); font-size: 11px;
+  font-weight: 700; margin-right: 7px; vertical-align: -5px; }
+.scorebar { display: inline-block; width: 56px; height: 6px; border-radius: 4px;
+  background: color-mix(in srgb, var(--seq-track) 45%, transparent);
+  vertical-align: 2px; overflow: hidden; }
+.scorebar > span { display: block; height: 100%; border-radius: 4px;
+  background: var(--seq); }
+.scorenum { margin-left: 6px; font-weight: 650; font-variant-numeric: tabular-nums; }
+code { font: 12px ui-monospace, Consolas, monospace; background: var(--page);
+  border: 1px solid var(--grid); border-radius: 6px; padding: 2px 6px;
+  white-space: nowrap; user-select: all; }
+.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px;
+  font-weight: 600; border: 1px solid var(--ring); border-radius: 999px;
+  padding: 2px 9px; color: var(--ink-2); white-space: nowrap; }
+.chip-ic { font-weight: 700; }
+.chip-good .chip-ic { color: var(--good); }
+.chip-warning .chip-ic { color: var(--warning); }
+.chip-serious .chip-ic { color: var(--serious); }
+.pkg { font-size: 12.5px; white-space: nowrap; }
+.acts { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+.btn { font: 12px system-ui, sans-serif; color: var(--ink-2);
+  background: var(--surface); border: 1px solid var(--ring); border-radius: 7px;
+  padding: 4px 8px; cursor: pointer; white-space: nowrap;
+  transition: border-color .12s, color .12s; }
+.btn:hover { border-color: var(--seq); color: var(--seq); }
+.btn:disabled { opacity: .55; cursor: default; }
+.btn-p { color: var(--seq); border-color: var(--seq); font-weight: 600; }
+.btn-ok:hover { border-color: var(--good); color: var(--good); }
+.btn-x:hover { border-color: var(--serious); color: var(--serious); }
+.scard input { width: 100%; font: 13px system-ui, sans-serif; color: var(--ink);
+  background: var(--page); border: 1px solid var(--ring); border-radius: 8px;
+  padding: 7px 10px; }
+.answer { margin-top: 10px; white-space: pre-wrap; color: var(--ink-2);
+  font-size: 12.5px; border-top: 1px solid var(--grid); padding-top: 10px; }
+#snack { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%)
+  translateY(80px); background: var(--ink); color: var(--page);
+  border-radius: 10px; padding: 10px 18px; font-size: 13px; max-width: 560px;
+  opacity: 0; transition: all .25s ease; pointer-events: none; z-index: 50; }
+#snack.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+[hidden] { display: none !important; }
+.foot { color: var(--mut); font-size: 12px; margin-top: 18px; }
+</style><script>function setFilter(el) {
+  document.querySelectorAll('.chip-f').forEach(c => c.classList.remove('active'));
+  el.classList.add('active'); applyFilters();
+}
+function applyFilters() {
+  const f = document.querySelector('.chip-f.active').dataset.f;
+  const q = (document.getElementById('q').value || '').toLowerCase();
+  document.querySelectorAll('tr.lead').forEach(tr => {
+    let ok = f === 'all' || tr.dataset[f] === '1';
+    if (ok && q) ok = tr.dataset.text.includes(q);
+    tr.hidden = !ok;
+  });
+}
+function themeGet() { try { return localStorage.getItem('jl-theme'); } catch (e) { return null; } }
+function themeSet(v) { try { v ? localStorage.setItem('jl-theme', v)
+  : localStorage.removeItem('jl-theme'); } catch (e) {} }
+function themeApply() {
+  const t = themeGet();
+  if (t) document.documentElement.dataset.theme = t;
+  else delete document.documentElement.dataset.theme;
+  const b = document.getElementById('themebtn');
+  if (b) { b.textContent = t === 'dark' ? '🌙' : t === 'light' ? '☀️' : '🖥️';
+           b.title = 'Theme: ' + (t || 'system') + ' (click to change)'; }
+}
+function cycleTheme() {
+  const t = themeGet();
+  themeSet(t === null ? 'dark' : t === 'dark' ? 'light' : null);
+  themeApply();
+}
+document.addEventListener('DOMContentLoaded', () => { themeApply(); applyFilters(); });
+</script></head><body><div class="wrap">
+<div class="head"><h1>🎯 Job Leads Console</h1>
+<span class="spacer"></span><button class="btn" id="themebtn" onclick="cycleTheme()">🖥️</button></div>
+<div class="sub">Pipeline last ran Sep 22, 09:20 · runs 8:00 &amp; 13:00 and at
+ every login · <a href="digests/latest.md">digest</a> · <a href="applications/">applications</a></div>
+<div class="focus"><div><span class="focus-k">Next best move</span> <strong>Software Engineer, New Grad</strong> at <strong>Stripe</strong> <span class="mut">— score 92 · posted 22d ago · package ready</span></div><div class="acts"></div></div>
+<div class="layout">
+<div class="main">
+<h2>Open leads <span class="count">14</span></h2>
+<div class="filters">
+<input id="q" type="search" placeholder="Search roles, companies…" oninput="applyFilters()">
+<button class="chip-f active" data-f="fresh" onclick="setFilter(this)">🕐 ≤ 14 days</button>
+<button class="chip-f" data-f="all" onclick="setFilter(this)">All ages</button>
+<button class="chip-f" data-f="hot" onclick="setFilter(this)">🔥 Hot</button>
+<button class="chip-f" data-f="new" onclick="setFilter(this)">● New</button>
+<button class="chip-f" data-f="pkg" onclick="setFilter(this)">📄 Ready</button>
+</div>
+<div class="card"><table>
+<thead><tr><th>Role</th><th>Company</th><th>Score</th><th>Salary</th><th>Posted</th>
+<th>Actions</th></tr></thead>
+<tbody><tr class="lead" data-hot="1" data-new="0" data-pkg="1" data-fresh="0" data-text="software engineer, new grad stripe toronto">
+<td class="t"><a href="https://stripe.com/jobs/search?gh_jid=8157838" target="_blank" rel="noopener">Software Engineer, New Grad</a>
+  <div class="why" title="Explicit new grad role at Stripe (top fintech) in Toronto—matches his Stripe payments expertise and full-stack stack perfectly.">Explicit new grad role at Stripe (top fintech) in Toronto—matches his Stripe payments expertise and full-stack stack perfectly.</div><div class="flags">⚠ No salary stated; typical for this level ~$110K–$150K CAD</div></td>
+<td class="co"><span class="av">S</span>Stripe</td>
+<td class="num"><span class="scorebar"><span style="width:92%"></span></span>
+  <span class="scorenum">92</span></td>
+<td><div class="sal" title=""><span class="mut">—</span></div></td>
+<td class="num">22d</td>
+<td><a class="pkg" title="Open application package" href="file:///C:/Users/matth/Documents/job-leads-agent/applications/2026-09-11-stripe-software-engineer-new-grad">📄</a> <code>py -3 apply.py gh:stripe:8157838</code></td>
+</tr><tr class="lead" data-hot="1" data-new="0" data-pkg="1" data-fresh="0" data-text="business development representative cohere toronto / remote">
+<td class="t"><a href="https://jobs.ashbyhq.com/cohere/e824f0bd-72e6-4a9b-aecb-e604e3ca8ac2" target="_blank" rel="noopener">Business Development Representative</a>
+  <div class="why" title="SDR at AI company in Toronto/remote where his sales background and daily AI-assisted development are direct edges">SDR at AI company in Toronto/remote where his sales background and daily AI-assisted development are direct edges</div></td>
+<td class="co"><span class="av">C</span>Cohere</td>
+<td class="num"><span class="scorebar"><span style="width:89%"></span></span>
+  <span class="scorenum">89</span></td>
+<td><div class="sal" title="CA$115K – CA$170K • Offers Equity">CA$115K – CA$170K • Offers Equity</div></td>
+<td class="num">20d</td>
+<td><a class="pkg" title="Open application package" href="file:///C:/Users/matth/Documents/job-leads-agent/applications/2026-09-11-cohere-business-development-representative">📄</a> <code>py -3 apply.py ab:cohere:e824f0bd-72e6-4a9b-aecb-e604e3ca8ac2</code></td>
+</tr><tr class="lead" data-hot="1" data-new="0" data-pkg="1" data-fresh="0" data-text="business development representative | ontario, canada ramp toronto, on / remote">
+<td class="t"><a href="https://jobs.ashbyhq.com/ramp/cce684de-191d-4a8a-bc42-7ded3ccd47af" target="_blank" rel="noopener">Business Development Representative | Ontario, Canada</a>
+  <div class="why" title="BDR at fintech in Toronto/remote with strong OTE matches sales target plus his Stripe payments experience">BDR at fintech in Toronto/remote with strong OTE matches sales target plus his Stripe payments experience</div></td>
+<td class="co"><span class="av">R</span>Ramp</td>
+<td class="num"><span class="scorebar"><span style="width:88%"></span></span>
+  <span class="scorenum">88</span></td>
+<td><div class="sal" title="CA$90K – CA$100K • Offers Equity • Offers Commission • 70/30 split">CA$90K – CA$100K • Offers Equity • Offers Commission • 70/30 split</div></td>
+<td class="num">43d</td>
+<td><a class="pkg" title="Open application package" href="file:///C:/Users/matth/Documents/job-leads-agent/applications/2026-09-11-ramp-business-development-representative-ontario-canada">📄</a> <code>py -3 apply.py ab:ramp:cce684de-191d-4a8a-bc42-7ded3ccd47af</code></td>
+</tr><tr class="lead" data-hot="1" data-new="0" data-pkg="1" data-fresh="0" data-text="mid-market implementation specialist - americas (east) ashby remote - us; remote - canada">
+<td class="t"><a href="https://jobs.ashbyhq.com/ashby/8341d4ba-5f07-4b40-a398-14a83092ab5f" target="_blank" rel="noopener">Mid-Market Implementation Specialist - Americas (East)</a>
+  <div class="why" title="Implementation specialist directly matches target role, EST timezone suits Toronto, $120K-$159K is strong junior salary, co-founder experience visible.">Implementation specialist directly matches target role, EST timezone suits Toronto, $120K-$159K is strong junior salary, co-founder experience visible.</div></td>
+<td class="co"><span class="av">A</span>Ashby</td>
+<td class="num"><span class="scorebar"><span style="width:88%"></span></span>
+  <span class="scorenum">88</span></td>
+<td><div class="sal" title="$120K – $159K • Offers Equity • Multiple Ranges">$120K – $159K • Offers Equity • Multiple Ranges</div></td>
+<td class="num">46d</td>
+<td><a class="pkg" title="Open application package" href="file:///C:/Users/matth/Documents/job-leads-agent/applications/2026-09-11-ashby-mid-market-implementation-specialist-americas-east">📄</a> <code>py -3 apply.py ab:ashby:8341d4ba-5f07-4b40-a398-14a83092ab5f</code></td>
+</tr><tr class="lead" data-hot="1" data-new="0" data-pkg="1" data-fresh="0" data-text="product engineer - brand - fullstack, backend or frontend faire kitchener-waterloo, on; toronto, on">
+<td class="t"><a href="https://boards.greenhouse.io/faire/jobs/8654106002?gh_jid=8654106002" target="_blank" rel="noopener">Product Engineer - Brand - Fullstack, Backend or Frontend</a>
+  <div class="why" title="Fullstack developer at marketplace SaaS in Ontario with exact React/TypeScript/backend skill match.">Fullstack developer at marketplace SaaS in Ontario with exact React/TypeScript/backend skill match.</div><div class="flags">⚠ no salary</div></td>
+<td class="co"><span class="av">F</span>Faire</td>
+<td class="num"><span class="scorebar"><span style="width:87%"></span></span>
+  <span class="scorenum">87</span></td>
+<td><div class="sal" title=""><span class="mut">—</span></div></td>
+<td class="num">56d</td>
+<td><a class="pkg" title="Open application package" href="file:///C:/Users/matth/Documents/job-leads-agent/applications/2026-09-11-faire-product-engineer-brand-fullstack-backend-or-frontend">📄</a> <code>py -3 apply.py gh:faire:8654106002</code></td>
+</tr><tr class="lead" data-hot="1" data-new="0" data-pkg="1" data-fresh="1" data-text="product support engineer - americas ashby remote - us; remote - canada">
+<td class="t"><a href="https://jobs.ashbyhq.com/ashby/80c20b00-c3c3-441b-95bd-56eb870e77fb" target="_blank" rel="noopener">Product Support Engineer - Americas</a>
+  <div class="why" title="Product Support Engineer at technical SaaS matches target role; Matthew&#x27;s UFA support analyst intern, customer-facing retail, and startup builder experience directly applicable; fresh posting, remote Canada eligible, salary in preferred range.">Product Support Engineer at technical SaaS matches target role; Matthew&#x27;s UFA support analyst intern, customer-facing retail, and startup builder experience directly applicable; fresh posting, remote Canada eligible, salary in preferred range.</div></td>
+<td class="co"><span class="av">A</span>Ashby</td>
+<td class="num"><span class="scorebar"><span style="width:85%"></span></span>
+  <span class="scorenum">85</span></td>
+<td><div class="sal" title="$75K – $140K • Offers Equity • Multiple Ranges">$75K – $140K • Offers Equity • Multiple Ranges</div></td>
+<td class="num">6d</td>
+<td><a class="pkg" title="Open application package" href="file:///C:/Users/matth/Documents/job-leads-agent/applications/2026-09-17-ashby-product-support-engineer-americas">📄</a> <code>py -3 apply.py ab:ashby:80c20b00-c3c3-441b-95bd-56eb870e77fb</code></td>
+</tr><tr class="lead" data-hot="1" data-new="0" data-pkg="1" data-fresh="0" data-text="business development representative loopio toronto, on hub / remote">
+<td class="t"><a href="https://jobs.ashbyhq.com/loopio/06e2b01b-984a-4380-9510-e956f05d825b" target="_blank" rel="noopener">Business Development Representative</a>
+  <div class="why" title="BDR at contract-intelligence SaaS in Toronto/remote with solid OTE matches his sales target">BDR at contract-intelligence SaaS in Toronto/remote with solid OTE matches his sales target</div></td>
+<td class="co"><span class="av">L</span>Loopio</td>
+<td class="num"><span class="scorebar"><span style="width:85%"></span></span>
+  <span class="scorenum">85</span></td>
+<td><div class="sal" title="CA$60K • Offers Equity • CA$30K Commission">CA$60K • Offers Equity • CA$30K Commission</div></td>
+<td class="num">35d</td>
+<td><a class="pkg" title="Open application package" href="file:///C:/Users/matth/Documents/job-leads-agent/applications/2026-09-11-loopio-business-development-representative">📄</a> <code>py -3 apply.py ab:loopio:06e2b01b-984a-4380-9510-e956f05d825b</code></td>
+</tr><tr class="lead" data-hot="1" data-new="0" data-pkg="1" data-fresh="1" data-text="software engineer, early career — immediate start stripe toronto">
+<td class="t"><a href="https://stripe.com/jobs/search?gh_jid=8212517" target="_blank" rel="noopener">Software Engineer, Early Career — Immediate Start</a>
+  <div class="why" title="Direct match to junior software developer target; full-stack web stack and Kiindmate&#x27;s payment integration/third-party work are highly relevant proof points.">Direct match to junior software developer target; full-stack web stack and Kiindmate&#x27;s payment integration/third-party work are highly relevant proof points.</div><div class="flags">⚠ Salary not stated for on-site role</div></td>
+<td class="co"><span class="av">S</span>Stripe</td>
+<td class="num"><span class="scorebar"><span style="width:83%"></span></span>
+  <span class="scorenum">83</span></td>
+<td><div class="sal" title=""><span class="mut">—</span></div></td>
+<td class="num">5d</td>
+<td><a class="pkg" title="Open application package" href="file:///C:/Users/matth/Documents/job-leads-agent/applications/2026-09-18-stripe-software-engineer-early-career-immediate-start">📄</a> <code>py -3 apply.py gh:stripe:8212517</code></td>
+</tr><tr class="lead" data-hot="1" data-new="0" data-pkg="1" data-fresh="0" data-text="implementation analyst achievers toronto">
+<td class="t"><a href="https://jobs.lever.co/achievers/bb44e122-f74b-4c16-9e93-34e30672221e" target="_blank" rel="noopener">Implementation Analyst</a>
+  <div class="why" title="Implementation specialist is a direct target role; Toronto-based customer partnership work aligns with his Kiindmate builder + Rogers retail experience.">Implementation specialist is a direct target role; Toronto-based customer partnership work aligns with his Kiindmate builder + Rogers retail experience.</div><div class="flags">⚠ salary unstated for on-site role</div></td>
+<td class="co"><span class="av">A</span>Achievers</td>
+<td class="num"><span class="scorebar"><span style="width:83%"></span></span>
+  <span class="scorenum">83</span></td>
+<td><div class="sal" title=""><span class="mut">—</span></div></td>
+<td class="num">18d</td>
+<td><a class="pkg" title="Open application package" href="file:///C:/Users/matth/Documents/job-leads-agent/applications/2026-09-11-achievers-implementation-analyst">📄</a> <code>py -3 apply.py lv:achievers:bb44e122-f74b-4c16-9e93-34e30672221e</code></td>
+</tr><tr class="lead" data-hot="1" data-new="0" data-pkg="1" data-fresh="1" data-text="software engineer i, frontend (upfunnel) affirm remote canada">
+<td class="t"><a href="https://job-boards.greenhouse.io/affirm/jobs/7985907003" target="_blank" rel="noopener">Software Engineer I, Frontend (Upfunnel)</a>
+  <div class="why" title="Junior frontend engineer with React/TypeScript exact match at fintech, remote Canada.">Junior frontend engineer with React/TypeScript exact match at fintech, remote Canada.</div><div class="flags">⚠ no salary</div></td>
+<td class="co"><span class="av">A</span>Affirm</td>
+<td class="num"><span class="scorebar"><span style="width:82%"></span></span>
+  <span class="scorenum">82</span></td>
+<td><div class="sal" title=""><span class="mut">—</span></div></td>
+<td class="num">11d</td>
+<td><a class="pkg" title="Open application package" href="file:///C:/Users/matth/Documents/job-leads-agent/applications/2026-09-12-affirm-software-engineer-i-frontend-upfunnel">📄</a> <code>py -3 apply.py gh:affirm:7985907003</code></td>
+</tr><tr class="lead" data-hot="1" data-new="0" data-pkg="0" data-fresh="0" data-text="sales development representative jobber edmonton; vancouver; kitchener-waterloo; toronto / remote">
+<td class="t"><a href="https://jobs.ashbyhq.com/jobber/930d105c-fca9-4b12-9996-3f4e56b1de19" target="_blank" rel="noopener">Sales Development Representative</a>
+  <div class="why" title="SDR at SMB-focused SaaS in Toronto/remote matches his target sales role">SDR at SMB-focused SaaS in Toronto/remote matches his target sales role</div><div class="flags">⚠ no-salary-stated</div></td>
+<td class="co"><span class="av">J</span>Jobber</td>
+<td class="num"><span class="scorebar"><span style="width:78%"></span></span>
+  <span class="scorenum">78</span></td>
+<td><div class="sal" title=""><span class="mut">—</span></div></td>
+<td class="num">22d</td>
+<td><code>py -3 apply.py ab:jobber:930d105c-fca9-4b12-9996-3f4e56b1de19</code></td>
+</tr><tr class="lead" data-hot="1" data-new="0" data-pkg="0" data-fresh="0" data-text="product engineer (ai / full-stack) great question canada / remote">
+<td class="t"><a href="https://jobs.ashbyhq.com/greatquestion/094067c8-29ec-4809-8617-06c7269593fb" target="_blank" rel="noopener">Product Engineer (AI / Full-Stack)</a>
+  <div class="why" title="Full-stack product engineer in Canada matches TypeScript/React/SQL stack and daily AI work; role seniority unsealed but aligned with builder background.">Full-stack product engineer in Canada matches TypeScript/React/SQL stack and daily AI work; role seniority unsealed but aligned with builder background.</div></td>
+<td class="co"><span class="av">G</span>Great Question</td>
+<td class="num"><span class="scorebar"><span style="width:78%"></span></span>
+  <span class="scorenum">78</span></td>
+<td><div class="sal" title="$150K – $180K • Offers Equity">$150K – $180K • Offers Equity</div></td>
+<td class="num">22d</td>
+<td><code>py -3 apply.py ab:greatquestion:094067c8-29ec-4809-8617-06c7269593fb</code></td>
+</tr><tr class="lead" data-hot="1" data-new="0" data-pkg="0" data-fresh="0" data-text="analytics engineer koho koho (can) / remote">
+<td class="t"><a href="https://jobs.ashbyhq.com/koho/2903b2ea-ae70-4c87-a967-675d3f8dee59" target="_blank" rel="noopener">Analytics Engineer</a>
+  <div class="why" title="Data analyst target in Canada/remote with solid salary but role likely mid-level not junior">Data analyst target in Canada/remote with solid salary but role likely mid-level not junior</div><div class="flags">⚠ role-level-likely-mid</div></td>
+<td class="co"><span class="av">K</span>KOHO</td>
+<td class="num"><span class="scorebar"><span style="width:78%"></span></span>
+  <span class="scorenum">78</span></td>
+<td><div class="sal" title="CA$110K – CA$135K">CA$110K – CA$135K</div></td>
+<td class="num">56d</td>
+<td><code>py -3 apply.py ab:koho:2903b2ea-ae70-4c87-a967-675d3f8dee59</code></td>
+</tr><tr class="lead" data-hot="1" data-new="0" data-pkg="0" data-fresh="0" data-text="customer engineer mastra remote">
+<td class="t"><a href="https://jobs.ashbyhq.com/mastra/05172cb0-47ec-44f9-9fe8-07d4896d10ad" target="_blank" rel="noopener">Customer Engineer</a>
+  <div class="why" title="Fresh posting aligns with his pursued Ada role; customer + technical builder combo is his strength.">Fresh posting aligns with his pursued Ada role; customer + technical builder combo is his strength.</div><div class="flags">⚠ no salary stated, remote eligibility for Canada unclear</div></td>
+<td class="co"><span class="av">M</span>Mastra</td>
+<td class="num"><span class="scorebar"><span style="width:75%"></span></span>
+  <span class="scorenum">75</span></td>
+<td><div class="sal" title=""><span class="mut">—</span></div></td>
+<td class="num">20d</td>
+<td><code>py -3 apply.py ab:mastra:05172cb0-47ec-44f9-9fe8-07d4896d10ad</code></td>
+</tr></tbody></table></div>
+<h2>In flight <span class="count">1</span></h2>
+<div class="card"><table>
+<thead><tr><th>Role</th><th>Company</th><th>Status</th><th>Since</th><th>Actions</th></tr></thead>
+<tbody><tr>
+<td class="t"><a href="https://job-boards.greenhouse.io/ada18/jobs/5232334007" target="_blank" rel="noopener">Customer Solutions Consultant, Ada Accelerate</a></td>
+<td class="co"><span class="av">A</span>Ada</td>
+<td><span class="chip chip-warning"><span class="chip-ic">!</span>follow up now</span></td>
+<td class="num">2026-09-12 · 10d</td>
+<td></td>
+</tr></tbody></table></div>
+<div class="foot">▶ Apply pre-fills the form for you to review and submit ·
+⚡ auto-submits (skips CAPTCHA forms) · 📄 opens the package · 📦 builds one ·
+✓ applied · ✕ skip · page refreshes every 15 minutes.</div>
+</div>
+<aside class="side">
+<div class="kpis"><div class="kpi"><div class="kpi-v">14</div><div class="kpi-l">Hot now</div></div><div class="kpi"><div class="kpi-v">11</div><div class="kpi-l">Packages</div></div><div class="kpi"><div class="kpi-v">1</div><div class="kpi-l">Applied</div></div><div class="kpi"><div class="kpi-v">0</div><div class="kpi-l">Interviews</div></div></div><details class="scard coach" open><summary>🧭 Coach briefing <span class="mut">2026-09-22</span></summary><p>11 packages are sitting ready while only 1 application has gone out — the oldest package has been waiting 11 days doing nothing. That&#x27;s the whole story today: you&#x27;re not short on leads, you&#x27;re short on sending.</p><ul><li>Send the Stripe New Grad SWE package now (score 92, oldest-ready, 11 days wasted).</li><li>Send Ashby Product Support Engineer (score 85, posted 6 days ago — still fresh, don&#x27;t let it age like Stripe did).</li><li>Send D2L Software Developer New Grad (score 88, package ready, sitting since Dec).</li><li>Send Faire Product Engineer (score 87, ready) — then stop pulling new leads until these 4 are out the door.</li></ul><p>Pattern: you&#x27;ve got 3 BDR/sales-flavored leads (Cohere, Ramp, Loopio) scored 85-89 and package-ready, but zero applied and zero skipped — you&#x27;re neither pursuing nor rejecting them. Decide today: either apply or mark them skipped so the funnel stops lying to you about what&#x27;s actually active.</p></details><div class="scard"><div class="scard-h">Funnel</div><div class="frow"><span><span class="fdot f1"></span>Seen</span><span class="fv">6282</span></div><div class="frow"><span><span class="fdot f2"></span>Passed filters</span><span class="fv">171</span></div><div class="frow"><span><span class="fdot f3"></span>Hot open</span><span class="fv">14</span></div><div class="frow"><span><span class="fdot f4"></span>Applied</span><span class="fv">1</span></div><div class="frow"><span><span class="fdot f5"></span>Interview</span><span class="fv">0</span></div></div><div class="scard"><div class="scard-h">New leads / day <span class="mut">14d</span></div><div class="bars"><span class="bar" title="2026-09-09: 0 new leads" style="height:4px"></span><span class="bar" title="2026-09-10: 0 new leads" style="height:4px"></span><span class="bar" title="2026-09-11: 121 new leads" style="height:34px"></span><span class="bar" title="2026-09-12: 7 new leads" style="height:4px"></span><span class="bar" title="2026-09-13: 0 new leads" style="height:4px"></span><span class="bar" title="2026-09-14: 1 new lead" style="height:4px"></span><span class="bar" title="2026-09-15: 0 new leads" style="height:4px"></span><span class="bar" title="2026-09-16: 30 new leads" style="height:8px"></span><span class="bar" title="2026-09-17: 3 new leads" style="height:4px"></span><span class="bar" title="2026-09-18: 2 new leads" style="height:4px"></span><span class="bar" title="2026-09-19: 2 new leads" style="height:4px"></span><span class="bar" title="2026-09-20: 4 new leads" style="height:4px"></span><span class="bar" title="2026-09-21: 0 new leads" style="height:4px"></span><span class="bar" title="2026-09-22: 1 new lead" style="height:4px"></span></div><div class="mut" style="font-size:11.5px">applied last 7 days: 0</div></div>
+</aside>
+</div>
+</div></body></html>
